@@ -1,10 +1,32 @@
-import * as React from 'react';
+import React , {useState} from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import {  KeyboardAvoidingView, StyleSheet, Text, View, TextInput, TouchableOpacity, Keyboard, ScrollView  } from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
 import Task from './Component/Task';
 
 export default function App() {
+  const [task, setState] = useState();
+  const [taskList, setTaskList] = useState([]);
+
+  const changeText = (value)=>{
+    console.log(value)
+  }
+
+  const createTask = ()=>{
+    if(task !== '' || task != null){
+      console.log("Task is : " + task)
+      setTaskList([...taskList,task])
+      console.log(taskList)
+      setState(null)
+    }
+  }
+
+  const completeTask = (index) => {
+    let itemsCopy = [...taskList];
+    itemsCopy.splice(index, 1);
+    setTaskList(itemsCopy)
+  }
+
   return (
     <View style={styles.container}>
       <LinearGradient colors={['#223ea2','#657eb2']} style = {styles.gradiantStyle}> 
@@ -12,8 +34,19 @@ export default function App() {
       placeholder='Enter Todo Task here ...'
       placeholderTextColor = '#fff'
       returnKeyType='done'
+      onSubmitEditing = {()=>createTask()}
+      onChangeText = {(text)=>setState(text)}
+      value = {task}
       style = {styles.inputStyle}/> 
-      <Task text = "satnam"/>
+      {
+            taskList.map((item, index) => {
+              return (
+                <TouchableOpacity key={index}  onPress={() => completeTask(index)}>
+                  <Task text={item} /> 
+                </TouchableOpacity>
+              )
+            })
+          }
       </LinearGradient> 
     </View>
   );
